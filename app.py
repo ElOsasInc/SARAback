@@ -4,6 +4,7 @@ from fastapi import UploadFile
 import psycopg2
 import re
 import io
+import os
 import PyPDF2
 from dotenv import dotenv_values
 import urllib.request
@@ -13,6 +14,7 @@ from pydantic import BaseModel
 
 app = FastAPI()
 config = dotenv_values()
+DATABASE_URL = os.environ['DATABASE_URL']
 
 app.add_middleware(
     CORSMiddleware,
@@ -26,16 +28,6 @@ class LoginReq(BaseModel):
     numemp: str
     password: str
 
-
-''''
-conexionAd = psycopg2.connect(
-    user=config["USER"],
-    password=config["PASSWORD"],
-    host=config["HOST"],
-    port=config["PORT"],
-    database=config["DATABASE"],
-)
-'''
 #CREDENCIALES DEL PROFESOR
 sesion = []
 
@@ -48,13 +40,7 @@ def registro():
 @app.post('/registro')
 def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
     try:
-        conexion = psycopg2.connect(
-            user = "u77f71n9s9n38k",
-            password = "p1dc9c79f9108b68b8cbf9f0323bd77a07a56522d01147ff49f869b4b22ef93a5",
-            host = "c952v5ogavqpah.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com",
-            port = "5432",
-            database = "d69bi2lklc1dcm"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         print("Conectado a la BD")
         #EN ESTA PARTE RECIBE LOS DATOS PARA REGISTRARSE COMO PROFESOR
         cursor = conexion.cursor()
@@ -70,13 +56,7 @@ def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
 def logIn(request:LoginReq):
     try:
         #INICIAR LA CONEXIÓN PARA IDENTIFICAR QUE EL PROFESOR SI EXISTE
-        conexion = psycopg2.connect(
-            user = request.numemp,
-            password = request.password,
-            host = "127.0.0.1",
-            port = "5432",
-            database = "SARA"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Profesores")
         print(cursor.fetchall())
