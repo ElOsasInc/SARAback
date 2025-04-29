@@ -197,6 +197,7 @@ def mostrarAsistencia(idGrupo:str):
     fechas = []
     clases = []
     asistencias = []
+    alumnos = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -225,6 +226,14 @@ def mostrarAsistencia(idGrupo:str):
             "Materia": clase[3]
         } for clase in clases]
         print(clases)
+        cursor.execute('SELECT DISTINCT numerolista, a.Boleta, Nombre FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
+        alumnos = cursor.fetchall()
+        alumnos = [{
+            "NumeroLista": alumno[0],
+            "Boleta": alumno[1],
+            "Nombre": alumno[2] 
+        } for alumno in alumnos]
+        print(alumnos)
         conexion.commit()
     except:
         print("No se puede acceder a la BD noob")
