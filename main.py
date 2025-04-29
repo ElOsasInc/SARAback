@@ -219,10 +219,10 @@ def getSecuencias():
         cursor = conexion.cursor()
         cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE numeroempleado = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (sesion[0],))
         clases = cursor.fetchall()
+        print(clases)
         conexion.commit()
     except:
         print("No se puede acceder a la BD noob")
     finally:
         if conexion:
             conexion.close()
-        return clases
