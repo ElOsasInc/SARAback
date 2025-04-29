@@ -165,7 +165,7 @@ async def subirGrupo(file: UploadFile = File(...)):
         if conexion:
             conexion.close()
 
-@upiicsara.post('/grupo/{idGrupo}')
+@upiicsara.put('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
 def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -178,22 +178,10 @@ def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
         if conexion:
             conexion.close()
 
-@upiicsara.put('/grupo/{idGrupo}')
-def modAsistencia(secuencia, periodo, idMateria, boleta, status):
-    try:
-        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
-        cursor = conexion.cursor()
-        cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, boleta, status))
-        conexion.commit()
-    except:
-        print("No se puede acceder a la BD noob")
-    finally:
-        if conexion:
-            conexion.close()
+
             
 @upiicsara.get('/grupo/{idGrupo}')
 def mostrarAsistencia(idGrupo:str):
-    print(f"Recibí esta mamada: {idGrupo}")
     fechas = []
     clases = []
     asistencias = []
