@@ -67,22 +67,24 @@ def logIn(request:LoginReq):
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
+        print(cursor.fetchall())
         if cursor.rowcount > 0:
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
             sesion.append(request.password)
+            respuesta = True
             print("Bienvenido")
-            return JSONResponse(status_code=200, content={"message":"Holaxd"})
         else:
             #MANDA ERROR
+            respuesta = False
             print("No existe")
-            return JSONResponse(status_code=401, content={"message":"No existe"})
+        conexion.commit()
     except:
         print(f"No se pudo conectar con la BD")
     finally:
         if conexion:
             conexion.close()
-        
+        return respuesta
 
 @upiicsara.delete('/destroythisworld')
 def borrartodo():
