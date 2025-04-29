@@ -194,6 +194,8 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
 @upiicsara.get('/grupo/{idGrupo}')
 def mostrarAsistencia(id_clase:str):
     fechas = []
+    clases = []
+    asistencias = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
