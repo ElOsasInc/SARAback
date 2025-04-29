@@ -54,15 +54,20 @@ def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
 
 @app.post('/login')
 def logIn(request:LoginReq):
+    sesion.clear()
     try:
         #INICIAR LA CONEXIÓN PARA IDENTIFICAR QUE EL PROFESOR SI EXISTE
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute("SELECT * FROM Profesores")
-        print(cursor.fetchall())
-        sesion.clear()
-        sesion.append(request.numemp)
-        sesion.append(request.password)
+        cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
+        if cursor.rowcount > 0:
+            #ACCEDE A LA SIG PANTALLA
+            print("Bienvenido")
+            sesion.append(request.numemp)
+            sesion.append(request.password)
+        else:
+            #MANDA ERROR
+            print("No existe")
         conexion.commit()
     except:
         print(f"No se pudo conectar con la BD")
@@ -73,13 +78,7 @@ def logIn(request:LoginReq):
 @app.delete('/destroythisworld')
 def borrartodo():
     try:
-        conexion = psycopg2.connect(
-            user = "postgres",
-            password = "duvalin12",
-            host = "127.0.0.1",
-            port = "5432",
-            database = "SARA"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         print("Conectado a la BD")
         tablas=['asistencia', 'clases', 'profesores', 'secuencias', 'alumnos']
         cursor = conexion.cursor()
@@ -126,13 +125,7 @@ async def subirGrupo(file: UploadFile = File(...)):
     #CONSULTAS A BD
     try:
         #INICIAR LA CONEXIÓN
-        conexion = psycopg2.connect(
-            user = sesion[0],           #AQUI DEBE IR EL NUMERO DE EMPLEADO
-            password = sesion[1],    #LA CONTRASEÑA DEL USUARIO QUE ESCRIBE EN EL LOGIN
-            host = "postgres://u77f71n9s9n38k:p1dc9c79f9108b68b8cbf9f0323bd77a07a56522d01147ff49f869b4b22ef93a5@c952v5ogavqpah.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/d69bi2lklc1dcm",
-            port = "5432",
-            database = "d69bi2lklc1dcm"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         print("Conectado a la BD")
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Secuencias WHERE Secuencia = %s AND Periodo = %s;", (secuencia, periodo))
@@ -162,7 +155,7 @@ async def subirGrupo(file: UploadFile = File(...)):
             conexion.close()
 
 @app.post('/grupo/{idGrupo}')
-def asistir(secuencia, periodo, idMateria, codigoQR, status):
+def asistir(secuencia, periodo, idMateria, codigoQR):
     #EXPRESIÓN REGULAR DE LA BOLETA
     boletaER = r'\d{10}|PE\d{8}'
     #LEER LA BOLETA DE LA URL
@@ -170,13 +163,7 @@ def asistir(secuencia, periodo, idMateria, codigoQR, status):
     contenido = response.read().decode('utf-8')
     boleta = re.findall(boletaER, contenido)
     try:
-        conexion = psycopg2.connect(
-            user = sesion[0],
-            password = sesion[1],
-            host = "127.0.0.1",
-            port = "5432",
-            database = "SARA"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("CALL InsertNuevaAsistencia(%s, %s, %s, %s);", (secuencia, periodo, idMateria, boleta))
         conexion.commit()
@@ -189,13 +176,7 @@ def asistir(secuencia, periodo, idMateria, codigoQR, status):
 @app.put('/grupo/{idGrupo}')
 def modAsistencia(secuencia, periodo, idMateria, boleta, status):
     try:
-        conexion = psycopg2.connect(
-            user = sesion[0],
-            password = sesion[1],
-            host = "127.0.0.1",
-            port = "5432",
-            database = "SARA"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, boleta, status))
         conexion.commit()
@@ -208,13 +189,7 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
 @app.get('/grupo/{idGrupo}')
 def mostrarAsistencia(id_clase):
     try:
-        conexion = psycopg2.connect(
-            user = "uc8bn09h26evl1",
-            password = "pe6176f6730f4f560c5e06802fdc986b10a15bc9a1b612e6fcf5bd4c708c5b8df",
-            host = "c952v5ogavqpah.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com",
-            port = "5432",
-            database = "dc9u2dqs3uerk8"
-        )
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute('SELECT DISTINCT CAST(Fecha AS VARCHAR) FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s', (id_clase,))
         fechas = np.ravel(cursor.fetchall())
