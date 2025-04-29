@@ -71,19 +71,19 @@ def logIn(request:LoginReq):
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
             sesion.append(request.password)
-            respuesta = True
             print("Bienvenido")
+            return JSONResponse(status_code=200, content={"message":"Holaxd"})
         else:
             #MANDA ERROR
-            respuesta = False
             print("No existe")
+            return JSONResponse(status_code=401, content={"message":"No existe"})
         conexion.commit()
     except:
         print(f"No se pudo conectar con la BD")
     finally:
         if conexion:
             conexion.close()
-        return respuesta
+        
 
 @upiicsara.delete('/destroythisworld')
 def borrartodo():
