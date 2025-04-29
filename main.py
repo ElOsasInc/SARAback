@@ -192,18 +192,18 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
             conexion.close()
             
 @upiicsara.get('/grupo/{idGrupo}')
-def mostrarAsistencia(id_clase:str):
-    print(f"Recibí esta mamada: {id_clase}")
+def mostrarAsistencia(idGrupo:str):
+    print(f"Recibí esta mamada: {idGrupo}")
     fechas = []
     clases = []
     asistencias = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT DISTINCT CAST(Fecha AS VARCHAR) FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s', (id_clase,))
+        cursor.execute('SELECT DISTINCT CAST(Fecha AS VARCHAR) FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s', (idGrupo,))
         fechas = np.ravel(cursor.fetchall())
         print(fechas)
-        cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (id_clase,))
+        cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
         asistencias = cursor.fetchall()
         asistencias = [{
             "NumeroLista": asistencia[0],
@@ -213,7 +213,7 @@ def mostrarAsistencia(id_clase:str):
             "Asistencia": asistencia[4]
         } for asistencia in asistencias]
         print(asistencias)
-        cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE ID_Clase = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (id_clase,))
+        cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE ID_Clase = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (idGrupo,))
         clases = cursor.fetchall()
         clases = [{
             "Secuencia": clase[0],
