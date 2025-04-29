@@ -1,6 +1,4 @@
-from fastapi import FastAPI
-from fastapi import File
-from fastapi import UploadFile
+from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import psycopg2
 import re
@@ -82,6 +80,7 @@ def logIn(request:LoginReq):
         return respuesta
     except:
         print(f"No se pudo conectar con la BD")
+        return False
     finally:
         if conexion:
             conexion.close()
