@@ -66,7 +66,9 @@ def logIn(request:LoginReq):
     try:
         #INICIAR LA CONEXIÓN PARA IDENTIFICAR QUE EL PROFESOR SI EXISTE
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        print("conexion iniciada")
         cursor = conexion.cursor()
+        print("Cursor creado")
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
         print(cursor.fetchall())
         if cursor.rowcount > 0:
