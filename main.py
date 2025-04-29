@@ -193,6 +193,7 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
             
 @upiicsara.get('/grupo/{idGrupo}')
 def mostrarAsistencia(id_clase:str):
+    print(f"Recibí esta mamada: {id_clase}")
     fechas = []
     clases = []
     asistencias = []
