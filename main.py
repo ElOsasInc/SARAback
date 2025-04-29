@@ -61,11 +61,13 @@ def logIn(request:LoginReq):
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
         if cursor.rowcount > 0:
             #ACCEDE A LA SIG PANTALLA
-            print("Bienvenido")
             sesion.append(request.numemp)
             sesion.append(request.password)
+            respuesta = True
+            print("Bienvenido")
         else:
             #MANDA ERROR
+            respuesta = False
             print("No existe")
         conexion.commit()
     except:
@@ -73,6 +75,7 @@ def logIn(request:LoginReq):
     finally:
         if conexion:
             conexion.close()
+        return respuesta
 
 @upiicsara.delete('/destroythisworld')
 def borrartodo():
