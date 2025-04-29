@@ -201,7 +201,10 @@ def mostrarAsistencia(idGrupo:str):
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute('SELECT DISTINCT CAST(Fecha AS VARCHAR) FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s', (idGrupo,))
-        fechas = np.ravel(cursor.fetchall())
+        fechas = cursor.fetchall()
+        fechas = [{
+            "Fecha": fecha
+        } for fecha in fechas]
         print(fechas)
         cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
         asistencias = cursor.fetchall()
