@@ -62,6 +62,7 @@ def registrarProfesor(request:SignUpReq):
 @upiicsara.post('/login')
 def logIn(request:LoginReq):
     sesion.clear()
+    respuesta = False
     try:
         #INICIAR LA CONEXIÓN PARA IDENTIFICAR QUE EL PROFESOR SI EXISTE
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
