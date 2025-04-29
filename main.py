@@ -77,7 +77,6 @@ def logIn(request:LoginReq):
             #MANDA ERROR
             print("No existe")
             return JSONResponse(status_code=401, content={"message":"No existe"})
-        conexion.commit()
     except:
         print(f"No se pudo conectar con la BD")
     finally:
