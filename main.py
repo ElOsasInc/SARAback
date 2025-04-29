@@ -66,7 +66,8 @@ def logIn(request:LoginReq):
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
-        if cursor.rowcount > 0:
+        resultado = cursor.fetchone();
+        if resultado:
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
             sesion.append(request.password)
