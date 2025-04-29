@@ -201,6 +201,7 @@ def mostrarAsistencia(id_clase:str):
         cursor = conexion.cursor()
         cursor.execute('SELECT DISTINCT CAST(Fecha AS VARCHAR) FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s', (id_clase,))
         fechas = np.ravel(cursor.fetchall())
+        print(fechas)
         cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (id_clase,))
         asistencias = cursor.fetchall()
         asistencias = [{
@@ -210,6 +211,7 @@ def mostrarAsistencia(id_clase:str):
             "Fecha": asistencia[3],
             "Asistencia": asistencia[4]
         } for asistencia in asistencias]
+        print(asistencias)
         cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE ID_Clase = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (id_clase,))
         clases = cursor.fetchall()
         clases = [{
@@ -218,6 +220,7 @@ def mostrarAsistencia(id_clase:str):
             "ID_Materia": clase[2],
             "Materia": clase[3]
         } for clase in clases]
+        print(clases)
         conexion.commit()
     except:
         print("No se puede acceder a la BD noob")
