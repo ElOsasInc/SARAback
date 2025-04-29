@@ -165,13 +165,7 @@ async def subirGrupo(file: UploadFile = File(...)):
             conexion.close()
 
 @upiicsara.post('/grupo/{idGrupo}')
-def asistir(secuencia, periodo, idMateria, codigoQR):
-    #EXPRESIÓN REGULAR DE LA BOLETA
-    boletaER = r'\d{10}|PE\d{8}'
-    #LEER LA BOLETA DE LA URL
-    response = urllib.request.urlopen(codigoQR)
-    contenido = response.read().decode('utf-8')
-    boleta = re.findall(boletaER, contenido)
+def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -197,7 +191,7 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
             conexion.close()
             
 @upiicsara.get('/grupo/{idGrupo}')
-def mostrarAsistencia(id_clase):
+def mostrarAsistencia(id_clase:str):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -215,6 +209,7 @@ def mostrarAsistencia(id_clase):
             
 @upiicsara.get('/grupo/')
 def getSecuencias():
+    clases = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -234,3 +229,4 @@ def getSecuencias():
         if conexion:
             conexion.close()
         return JSONResponse(content=clases)
+
