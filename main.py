@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from fastapi import File
 from fastapi import UploadFile
+from fastapi.responses import JSONResponse
 import psycopg2
 import re
 import io
@@ -219,6 +220,12 @@ def getSecuencias():
         cursor = conexion.cursor()
         cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE numeroempleado = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (sesion[0],))
         clases = cursor.fetchall()
+        clases = [{
+            "Secuencia": clase[0],
+            "Periodo": clase[1],
+            "ID_Materia": clase[2],
+            "Materia": clase[3]
+        } for clase in clases]
         print(clases)
         conexion.commit()
     except:
