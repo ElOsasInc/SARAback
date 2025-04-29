@@ -27,6 +27,13 @@ class LoginReq(BaseModel):
     numemp: str
     password: str
 
+class SignUpReq(BaseModel):
+    numemp: str
+    nombreProfesor:str
+    correo:str
+    password: str
+
+
 #CREDENCIALES DEL PROFESOR
 sesion = []
 
@@ -37,13 +44,13 @@ def registro():
     return 0
 
 @upiicsara.post('/registro')
-def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
+def registrarProfesor(request:SignUpReq):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         print("Conectado a la BD")
         #EN ESTA PARTE RECIBE LOS DATOS PARA REGISTRARSE COMO PROFESOR
         cursor = conexion.cursor()
-        cursor.execute("CALL InsertProfesores(%s, %s, %s, %s)", (numemp, nombreProfesor, correo, contraseña))
+        cursor.execute("CALL InsertProfesores(%s, %s, %s, %s)", (request.numemp, request.nombreProfesor, request.correo, request.password))
         conexion.commit()
     except:
         print("No se puede acceder a la BD")
