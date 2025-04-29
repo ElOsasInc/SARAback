@@ -62,24 +62,21 @@ def registrarProfesor(request:SignUpReq):
 @upiicsara.post('/login')
 def logIn(request:LoginReq):
     sesion.clear()
-    respuesta = False
+    respuesta = {False}
     try:
         #INICIAR LA CONEXIÓN PARA IDENTIFICAR QUE EL PROFESOR SI EXISTE
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
-        print("conexion iniciada")
         cursor = conexion.cursor()
-        print("Cursor creado")
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
-        print(cursor.fetchall())
         if cursor.rowcount > 0:
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
             sesion.append(request.password)
-            respuesta = True
+            respuesta = {True}
             print("Bienvenido")
         else:
             #MANDA ERROR
-            respuesta = False
+            respuesta = {False}
             print("No existe")
         conexion.commit()
     except:
