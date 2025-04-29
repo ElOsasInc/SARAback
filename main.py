@@ -66,7 +66,7 @@ def logIn(request:LoginReq):
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
-        resultado = cursor.fetchone();
+        resultado = cursor.fetchone()
         if resultado:
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
@@ -193,6 +193,7 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
             
 @upiicsara.get('/grupo/{idGrupo}')
 def mostrarAsistencia(id_clase:str):
+    fechas = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -200,13 +201,28 @@ def mostrarAsistencia(id_clase:str):
         fechas = np.ravel(cursor.fetchall())
         cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (id_clase,))
         asistencias = cursor.fetchall()
-        print(asistencias)
+        asistencias = [{
+            "NumeroLista": asistencia[0],
+            "Boleta": asistencia[1],
+            "Nombre": asistencia[2],
+            "Fecha": asistencia[3],
+            "Asistencia": asistencia[4]
+        } for asistencia in asistencias]
+        cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE ID_Clase = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (id_clase,))
+        clases = cursor.fetchall()
+        clases = [{
+            "Secuencia": clase[0],
+            "Periodo": clase[1],
+            "ID_Materia": clase[2],
+            "Materia": clase[3]
+        } for clase in clases]
         conexion.commit()
     except:
         print("No se puede acceder a la BD noob")
     finally:
         if conexion:
             conexion.close()
+        return JSONResponse(content={clases, fechas, asistencias})
             
 @upiicsara.get('/grupo/')
 def getSecuencias():
