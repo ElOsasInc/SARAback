@@ -6,14 +6,12 @@ import re
 import io
 import os
 import PyPDF2
-from dotenv import dotenv_values
 import urllib.request
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
 app = FastAPI()
-config = dotenv_values()
 DATABASE_URL = os.environ['DATABASE_URL']
 #DATABASE_URL = 'postgres://uc8bn09h26evl1:pe6176f6730f4f560c5e06802fdc986b10a15bc9a1b612e6fcf5bd4c708c5b8df@c952v5ogavqpah.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dc9u2dqs3uerk8'
 
