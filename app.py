@@ -11,11 +11,11 @@ import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-main = FastAPI()
+app = FastAPI()
 DATABASE_URL = os.environ['DATABASE_URL']
 #DATABASE_URL = 'postgres://uc8bn09h26evl1:pe6176f6730f4f560c5e06802fdc986b10a15bc9a1b612e6fcf5bd4c708c5b8df@c952v5ogavqpah.cluster-czrs8kj4isg7.us-east-1.rds.amazonaws.com:5432/dc9u2dqs3uerk8'
 
-main.add_middleware(
+app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
     allow_credentials=True,
@@ -32,11 +32,11 @@ sesion = []
 
 
 
-@main.post('/')
+@app.post('/')
 def registro():
     return 0
 
-@main.post('/registro')
+@app.post('/registro')
 def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -51,7 +51,7 @@ def registrarProfesor(numemp, nombreProfesor, correo, contraseña):
         if conexion:
             conexion.close()
 
-@main.post('/login')
+@app.post('/login')
 def logIn(request:LoginReq):
     sesion.clear()
     try:
@@ -74,7 +74,7 @@ def logIn(request:LoginReq):
         if conexion:
             conexion.close()
 
-@main.delete('/destroythisworld')
+@app.delete('/destroythisworld')
 def borrartodo():
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -92,7 +92,7 @@ def borrartodo():
             conexion.close()
 
 
-@main.post('/grupo/')
+@app.post('/grupo/')
 async def subirGrupo(file: UploadFile = File(...)):
     #EXPRESIONES REGULARES
     secuenciaER = r'\d[A-Z][MV]\d{2}'
@@ -153,7 +153,7 @@ async def subirGrupo(file: UploadFile = File(...)):
         if conexion:
             conexion.close()
 
-@main.post('/grupo/{idGrupo}')
+@app.post('/grupo/{idGrupo}')
 def asistir(secuencia, periodo, idMateria, codigoQR):
     #EXPRESIÓN REGULAR DE LA BOLETA
     boletaER = r'\d{10}|PE\d{8}'
@@ -172,7 +172,7 @@ def asistir(secuencia, periodo, idMateria, codigoQR):
         if conexion:
             conexion.close()
 
-@main.put('/grupo/{idGrupo}')
+@app.put('/grupo/{idGrupo}')
 def modAsistencia(secuencia, periodo, idMateria, boleta, status):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -185,7 +185,7 @@ def modAsistencia(secuencia, periodo, idMateria, boleta, status):
         if conexion:
             conexion.close()
             
-@main.get('/grupo/{idGrupo}')
+@app.get('/grupo/{idGrupo}')
 def mostrarAsistencia(id_clase):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
