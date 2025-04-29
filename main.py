@@ -240,7 +240,7 @@ def mostrarAsistencia(idGrupo:str):
     finally:
         if conexion:
             conexion.close()
-        return JSONResponse(content={"clases":clases, "fechas":fechas, "asistencias":asistencias})
+        return JSONResponse(content={"clases":clases, "fechas":fechas, "asistencias":asistencias, "alumnos":alumnos})
             
 @upiicsara.get('/grupo/')
 def getSecuencias():
