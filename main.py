@@ -226,3 +226,4 @@ def getSecuencias():
     finally:
         if conexion:
             conexion.close()
+        return clases
