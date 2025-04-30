@@ -179,11 +179,13 @@ def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
             conexion.close()
 
 @upiicsara.put('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
-def modAsistencia(secuencia:str, periodo:str, idMateria:str, numerolista:int, fecha:str, cambio:bool):
+def modAsistencia(secuencia:str, periodo:str, idMateria:str, boleta:int, fecha:str, cambio:bool):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, numerolista, fecha, cambio))
+        cursor.execute("SELECT ID_Lista FROM Listas WHERE ID_Clase = %s AND Boleta = %s", ((secuencia+periodo+idMateria), boleta))
+        numerolista = cursor.fetchone()
+        cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, numerolista[0], fecha, cambio))
         conexion.commit()
         print("Asistencia actualizada")
     except:
