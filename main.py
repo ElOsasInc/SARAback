@@ -1,11 +1,11 @@
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.responses import JSONResponse
 import psycopg2
+import base64
 import re
 import io
 import os
 import PyPDF2
-import urllib.request
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
@@ -104,38 +104,46 @@ def borrartodo():
             conexion.close()
 
 
-@upiicsara.post('/grupo/')
-async def subirGrupo(file: UploadFile = File(...)):
-    #EXPRESIONES REGULARES
+@app.post('/grupo/')
+async def subirGrupo(file: dict = Body(...)):  # Recibimos un dict, que contendrá el archivo como base64
+    # Obtener el contenido base64 del archivo
+    file_content = file.get("file")  # Asegúrate de que "file" es el nombre de la clave en el JSON
+
+    # Decodificar el archivo base64
+    archivo_decodificado = base64.b64decode(file_content)
+
+    # CREACIÓN DEL LECTOR DEL ARCHIVO
+    archivo = io.BytesIO(archivo_decodificado)
+    lector = PyPDF2.PdfReader(archivo)
+
+    # EXTRACCIÓN DEL TEXTO
+    texto = ""
+    for pagina in lector.pages:
+        texto = texto + pagina.extract_text()
+
+    # EXPRESIONES REGULARES
     secuenciaER = r'\d[A-Z][MV]\d{2}'
     materiaER = r'(?P<clave>[A-Z]\d{3})\ (?P<materia>(\ ?[A-ZÑÁÉÍÓÚ])+)'
     periodoER = r'\d{4}(1|2)'
     alumnoER = r'(?P<boleta>\d{10}|PE\d{8})\s(?P<nl>\d{1,2})\s(?P<nombre>(\ ?[A-ZÑ])+)'
-    #IDENTIFICACIÓN DEL ARCHIVO PDF
-    contenido = await file.read()
-    archivo = io.BytesIO(contenido)
-    #CREACIÓN DEL LECTOR DEL ARCHIVO
-    lector = PyPDF2.PdfReader(archivo)
-    #EXTRACCIÓN DEL TEXTO
-    texto = ""
-    for pagina in lector.pages:
-        texto = texto + pagina.extract_text()
-    #EXTRACCIÓN DE LOS VALORES
-    #CADA UNA DE LAS VARIABLES TENDRÁ SU INSERCIÓN A BD
-    invBoletas = []
-    invNL = []
-    invNombres = []
+
+    # EXTRACCIÓN DE LOS VALORES
     secuencia = re.search(secuenciaER, texto).group(0)
     clave = re.sub("PERIODO ESCOLAR", "", re.search(materiaER, texto).group(1))
     materia = re.sub("PERIODO ESCOLAR", "", re.search(materiaER, texto).group(2))
     periodo = re.search(periodoER, texto).group(0)
+
+    invBoletas = []
+    invNL = []
+    invNombres = []
     for alumno in re.findall(alumnoER, texto):
         invBoletas.append(alumno[0])
         invNL.append(alumno[1])
         invNombres.append(alumno[2])
-    #CONSULTAS A BD
+
+    # CONSULTAS A BD
     try:
-        #INICIAR LA CONEXIÓN
+        # INICIAR LA CONEXIÓN
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         print("Conectado a la BD")
         cursor = conexion.cursor()
@@ -157,13 +165,13 @@ async def subirGrupo(file: UploadFile = File(...)):
             if cursor.rowcount < 1:
                 cursor.execute("CALL InsertListas(%s, %s, %s, %s, %s)", (secuencia, periodo, clave, invBoletas[alumno], invNL[alumno]))
         conexion.commit()
-    #ERROR EN CASO DE QUE NO PUEDA CONECTARSE
     except psycopg2.Error as error:
         print("Error al conectar con la Base de Datos", error)
-    #CERRAR LA CONEXIÓN
     finally:
         if conexion:
             conexion.close()
+
+    return {"message": "Archivo procesado correctamente"}
 
 @upiicsara.post('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
 def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
