@@ -184,9 +184,9 @@ def modAsistencia(secuencia:str, periodo:str, idMateria:str, boleta:int, fecha:s
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute("SELECT ID_Lista FROM Listas WHERE ID_Clase = %s AND Boleta = %s", ((secuencia+periodo+idMateria), boleta))
+        cursor.execute("SELECT numerolista FROM Listas WHERE ID_Clase = %s AND Boleta = %s", ((secuencia+periodo+idMateria), boleta))
         numerolista = cursor.fetchone()
-        print(numerolista)
+        print(numerolista[0])
         cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, numerolista[0], fecha, cambio))
         conexion.commit()
         print("Asistencia actualizada")
