@@ -109,7 +109,7 @@ async def subirGrupo(file: UploadFile = File(...)):
     #EXPRESIONES REGULARES
     secuenciaER = r'\d[A-Z][MV]\d{2}'
     materiaER = r'(?P<clave>[A-Z]\d{3})\ (?P<materia>(\ ?[A-ZÑÁÉÍÓÚ])+)'
-    periodoER = r'\d{4}(1|2)'
+    periodoER = r'\d{5}'
     alumnoER = r'(?P<boleta>\d{10}|PE\d{8})\s(?P<nl>\d{1,2})\s(?P<nombre>(\ ?[A-ZÑ])+)'
     #IDENTIFICACIÓN DEL ARCHIVO PDF
     contenido = await file.read()
@@ -164,7 +164,7 @@ async def subirGrupo(file: UploadFile = File(...)):
     finally:
         if conexion:
             conexion.close()
-
+            
 @upiicsara.post('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
 def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
     try:
