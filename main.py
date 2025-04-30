@@ -165,7 +165,7 @@ async def subirGrupo(file: UploadFile = File(...)):
         if conexion:
             conexion.close()
 
-@upiicsara.put('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
+@upiicsara.post('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
 def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
@@ -178,6 +178,19 @@ def asistir(secuencia:str, periodo:str, idMateria:str, boleta:int):
         if conexion:
             conexion.close()
 
+@upiicsara.put('/grupo/{idGrupo}') #La neta ya me cansé xd 4:35 29/04
+def modAsistencia(secuencia:str, periodo:str, idMateria:str, numerolista:int, fecha:str, cambio:bool):
+    try:
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conexion.cursor()
+        cursor.execute("CALL ModAsistencia(%s, %s, %s, %s, %s, %s);", (secuencia, periodo, idMateria, numerolista, fecha, cambio))
+        conexion.commit()
+        print("Asistencia actualizada")
+    except:
+        print("No fue posible actualizar la asistencia")
+    finally:
+        if conexion:
+            conexion.close()
 
             
 @upiicsara.get('/grupo/{idGrupo}')
