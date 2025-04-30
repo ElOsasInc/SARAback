@@ -104,7 +104,7 @@ def borrartodo():
             conexion.close()
 
 
-@app.post('/grupo/')
+@upiicsara.post('/grupo/')
 async def subirGrupo(file: dict = Body(...)):  # Recibimos un dict, que contendrá el archivo como base64
     # Obtener el contenido base64 del archivo
     file_content = file.get("file")  # Asegúrate de que "file" es el nombre de la clave en el JSON
