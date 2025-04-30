@@ -109,7 +109,7 @@ async def subirGrupo(file: UploadFile = File(...)):
     #EXPRESIONES REGULARES
     secuenciaER = r'\d[A-Z][MV]\d{2}'
     materiaER = r'(?P<clave>[A-Z]\d{3})\ (?P<materia>(\ ?[A-ZÑÁÉÍÓÚ])+)'
-    periodoER = r'\d{5}'
+    periodoER = r'\d{4}(1|2)'
     alumnoER = r'(?P<boleta>\d{10}|PE\d{8})\s(?P<nl>\d{1,2})\s(?P<nombre>(\ ?[A-ZÑ])+)'
     #IDENTIFICACIÓN DEL ARCHIVO PDF
     contenido = await file.read()
