@@ -17,7 +17,8 @@ DATABASE_URL = os.environ['DATABASE_URL']
 upiicsara.add_middleware(
     CORSMiddleware,
     allow_origins=[
-        "http://localhost:3000"
+        "http://localhost:3000",
+        "https://upiicsara.vercel.app/"
         ],
     allow_credentials=True,
     allow_methods=["*"],
