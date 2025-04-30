@@ -231,7 +231,7 @@ def mostrarAsistencia(idGrupo:str):
             "Materia": clase[3]
         } for clase in clases]
         print(clases)
-        cursor.execute('SELECT DISTINCT numerolista, a.Boleta, Nombre FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
+        cursor.execute('SELECT DISTINCT numerolista, Listas.Boleta, Nombre FROM Listas INNER JOIN Alumnos ON Listas.Boleta = Alumnos.Boleta WHERE ID_Clase = %s ORDER BY numerolista', (idGrupo,))
         alumnos = cursor.fetchall()
         alumnos = [{
             "NumeroLista": alumno[0],
