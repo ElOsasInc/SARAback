@@ -203,7 +203,7 @@ def mostrarAsistencia(idGrupo:str):
     clases = []
     asistencias = []
     alumnos = []
-    profesor = 0
+    profesor = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
@@ -240,11 +240,14 @@ def mostrarAsistencia(idGrupo:str):
             "Nombre": alumno[2] 
         } for alumno in alumnos]
         print(alumnos)
-        cursor.execute('SELECT numeroempleado FROM Clases WHERE ID_Clase = %s', (idGrupo,))
+        cursor.execute('SELECT numeroempleado FROM Clases WHERE ID_Clase = %s', (idGrupo))
         profesor = cursor.fetchall()
-        print(profesor)
         profesor = profesor[0]
+        profesor[{
+            "Profesor": profesor[0]
+        }]
         print(profesor)
+        
         conexion.commit()
     except:
         print("No se puede acceder a la BD noob")
