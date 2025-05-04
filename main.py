@@ -203,7 +203,7 @@ def mostrarAsistencia(idGrupo:str):
     clases = []
     asistencias = []
     alumnos = []
-    profesor
+    profesor = 0
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
