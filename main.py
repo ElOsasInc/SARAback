@@ -241,7 +241,7 @@ def mostrarAsistencia(idGrupo:str):
         } for alumno in alumnos]
         print(alumnos)
         cursor.execute('SELECT numeroempleado FROM Clases WHERE ID_Clase = %s AND ID_Clase = %s', (idGrupo,idGrupo))
-        profesor = cursor.fetchall()
+        profesor = cursor.fetchone()
         print(profesor)
         profesor=[{
             "Profesor": profesor[0]
