@@ -213,14 +213,15 @@ def mostrarAsistencia(idGrupo:str):
             "Fecha": fecha
         } for fecha in fechas]
         print(fechas)
-        cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
+        cursor.execute('SELECT numerolista, a.Boleta, Nombre, CAST(Fecha AS VARCHAR), AoF, Hora FROM (SELECT * FROM Asistencia INNER JOIN Listas ON Asistencia.ID_Lista = Listas.ID_Lista WHERE ID_Clase = %s) AS a INNER JOIN Alumnos ON a.Boleta = Alumnos.boleta ORDER BY numerolista', (idGrupo,))
         asistencias = cursor.fetchall()
         asistencias = [{
             "NumeroLista": asistencia[0],
             "Boleta": asistencia[1],
             "Nombre": asistencia[2],
             "Fecha": asistencia[3],
-            "Asistencia": asistencia[4]
+            "Asistencia": asistencia[4],
+            "Hora": asistencia[5]
         } for asistencia in asistencias]
         print(asistencias)
         cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE ID_Clase = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (idGrupo,))
