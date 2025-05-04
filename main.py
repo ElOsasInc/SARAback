@@ -242,7 +242,6 @@ def mostrarAsistencia(idGrupo:str):
         print(alumnos)
         cursor.execute('SELECT numeroempleado FROM Clases WHERE ID_Clase = %s AND ID_Clase = %s', (idGrupo,idGrupo))
         profesor = cursor.fetchone()
-        print(profesor)
         profesor=[{
             "Profesor": profesor[0]
         }]
@@ -254,7 +253,7 @@ def mostrarAsistencia(idGrupo:str):
     finally:
         if conexion:
             conexion.close()
-        return JSONResponse(content={"clases":clases, "fechas":fechas, "asistencias":asistencias, "alumnos":alumnos, })
+        return JSONResponse(content={"clases":clases, "fechas":fechas, "asistencias":asistencias, "alumnos":alumnos, "profesor":profesor})
             
 @upiicsara.get('/grupo/')
 def getSecuencias():
