@@ -298,11 +298,11 @@ def mandarCorreo(request:RecoveryReq):
         Profesor_Existe = cursor.fetchone()
         print(Profesor_Existe)
         if Profesor_Existe:
-            smtp_server = os.environ[['SMTP_SERVER']]
+            smtp_server = os.environ['SMTP_SERVER']
             print(smtp_server)
-            smtp_port = os.environ[['SMTP_PORT']]
-            smtp_user = os.environ[['SMTP_USER']]
-            smtp_password = os.environ[['SMTP_PASSWORD']]
+            smtp_port = os.environ['SMTP_PORT']
+            smtp_user = os.environ['SMTP_USER']
+            smtp_password = os.environ['SMTP_PASSWORD']
             smtp_destiny = request.correo
             msg = MIMEMultipart()
             msg['From'] = smtp_user
