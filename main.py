@@ -336,7 +336,7 @@ def mandarCorreo(request:RecoveryReq):
         if conexion:
             conexion.close()
 
-@upiicsara.post('/nuevoinvitado/')
+@upiicsara.post('/nuevoinvitado/{idClase}')
 def nuevoInvitado(idClase:str):
     respuesta = ""
     try:
@@ -353,10 +353,11 @@ def nuevoInvitado(idClase:str):
                 print("Volviendo a generar invitado")
             else:
                 break
-        cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
-        respuesta = invitado
+            cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
+            conexion.commit()
+            respuesta = invitado
     except:
-        print("No se puede acceder a la BD gay")
+        print("No se puede acceder a la BD")
         respuesta = False
     finally:
         if conexion:
