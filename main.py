@@ -347,12 +347,15 @@ def nuevoInvitado(idClase:str):
             for i in range(5):
                 i = random.randint(0, 9)
                 invitado = f'{invitado}{i}'
+            print(invitado)
             cursor.execute('SELECT ID_Invitado FROM Invitados WHERE ID_Invitado = %s', (invitado,))
             Invitado_Existe = cursor.fetchone()
+            print(Invitado_Existe)
             if Invitado_Existe:
                 print("Volviendo a generar invitado")
             else:
                 break
+            print(invitado)
             cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
             conexion.commit()
             respuesta = invitado
