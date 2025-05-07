@@ -350,12 +350,11 @@ def nuevoInvitado(idClase:str):
             print(invitado)
             cursor.execute('SELECT ID_Invitado FROM Invitados WHERE ID_Invitado = %s', (invitado,))
             Invitado_Existe = cursor.fetchone()
-            print(Invitado_Existe)
             if Invitado_Existe:
                 print("Volviendo a generar invitado")
             else:
+                print(invitado)
                 break
-            print(invitado)
             cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
             conexion.commit()
             respuesta = invitado
