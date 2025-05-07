@@ -41,8 +41,6 @@ class RecoveryReq(BaseModel):
     numemp: str
     correo: str
     
-class UserReq(BaseModel):
-    numemp: str
 
 #CREDENCIALES DEL PROFESOR
 sesion = []
@@ -269,12 +267,12 @@ def mostrarAsistencia(idGrupo:str):
         return JSONResponse(content={"clases":clases, "fechas":fechas, "asistencias":asistencias, "alumnos":alumnos, "profesor":profesor})
             
 @upiicsara.get('/grupo/')
-def getSecuencias(request:UserReq):
+def getSecuencias():
     clases = []
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE numeroempleado = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (request.numemp,))
+        cursor.execute('SELECT Secuencia, Periodo, a.ID_Materia, Materia FROM (SELECT * FROM Clases INNER JOIN Secuencias ON Clases.ID_Secuencia = Secuencias.ID_Secuencia WHERE numeroempleado = %s) AS a INNER JOIN Materias ON Materias.ID_Materia = a.ID_Materia', (sesion[0],))
         clases = cursor.fetchall()
         clases = [{
             "Secuencia": clase[0],
