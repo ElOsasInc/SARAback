@@ -286,11 +286,11 @@ def getSecuencias():
         return JSONResponse(content=clases)
 
 @upiicsara.post('/recuperar-cuenta/')
-def mandarCorreo(numeroempleado:int, correo:str):
+def mandarCorreo(numemp:int, correo:str):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (numeroempleado, correo))
+        cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (numemp, correo))
         Profesor_Existe = cursor.fetchone()
         print(Profesor_Existe)
         if Profesor_Existe:
