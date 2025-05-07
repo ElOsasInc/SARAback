@@ -386,6 +386,7 @@ def cambiarPassword(password:str):
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
         cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, sesion[0]))
+        conexion.commit()
     except:
         print("No se puede acceder a la BD gay")
     finally:
