@@ -347,13 +347,11 @@ def nuevoInvitado(idClase:str):
             for i in range(5):
                 i = random.randint(0, 9)
                 invitado = f'{invitado}{i}'
-            print(invitado)
             cursor.execute('SELECT ID_Invitado FROM Invitados WHERE ID_Invitado = %s', (invitado,))
             Invitado_Existe = cursor.fetchone()
             if Invitado_Existe:
                 print("Volviendo a generar invitado")
             else:
-                print(invitado)
                 break
         cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
         conexion.commit()
@@ -364,7 +362,6 @@ def nuevoInvitado(idClase:str):
     finally:
         if conexion:
             conexion.close()
-        print(respuesta)
         return JSONResponse(content=respuesta)
     
 @upiicsara.post('/login-invitado/')
