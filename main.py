@@ -40,6 +40,9 @@ class SignUpReq(BaseModel):
 class RecoveryReq(BaseModel):
     numemp: str
     correo: str
+    
+class PasswordData(BaseModel):
+    password: str
 
 #CREDENCIALES DEL PROFESOR
 sesion = []
@@ -381,11 +384,11 @@ def loginInvitado(invitado:int):
         return respuesta
     
 @upiicsara.put('/cambiar-password/')
-def cambiarPassword(password:str):
+def cambiarPassword(request:PasswordData):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, sesion[0]))
+        cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (request.password, sesion[0]))
         conexion.commit()
     except:
         print("No se puede acceder a la BD gay")
