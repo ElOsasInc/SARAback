@@ -292,8 +292,10 @@ def mandarCorreo(numeroempleado:int, correo:str):
         cursor = conexion.cursor()
         cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (numeroempleado, correo))
         Profesor_Existe = cursor.fetchone()
+        print(Profesor_Existe)
         if Profesor_Existe:
             smtp_server = os.environ('SMTP_SERVER')
+            print(smtp_server)
             smtp_port = os.environ('SMTP_PORT')
             smtp_user = os.environ('SMTP_USER')
             smtp_password = os.environ('SMTP_PASSWORD')
@@ -321,8 +323,8 @@ def mandarCorreo(numeroempleado:int, correo:str):
                 print(f"Error al enviar el correo: {e}")
         else:
             print("El profesor no existe")
-    except:
-        print("No se puede acceder a la BD xd")
+    except Exception as error:
+        print(f"No se puede acceder a la BD xd {error}")
     finally:
         if conexion:
             conexion.close()
