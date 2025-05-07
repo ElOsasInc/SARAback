@@ -9,6 +9,11 @@ import PyPDF2
 import numpy as np
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
+import smtplib
+from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
+import random
+
 
 upiicsara = FastAPI()
 DATABASE_URL = os.environ['DATABASE_URL']
@@ -67,6 +72,7 @@ def logIn(request:LoginReq):
         cursor = conexion.cursor()
         cursor.execute("SELECT * FROM Profesores WHERE Numeroempleado = %s AND Contrasena = %s", (request.numemp, request.password))
         resultado = cursor.fetchone()
+        cursor.execute("DELETE FROM Invitados WHERE Hora_Caducidad < (NOW() AT TIME ZONE 'America/Mexico_City');")
         if resultado:
             #ACCEDE A LA SIG PANTALLA
             sesion.append(request.numemp)
@@ -279,3 +285,101 @@ def getSecuencias():
             conexion.close()
         return JSONResponse(content=clases)
 
+@upiicsara.post('/recuperar-cuenta/')
+def mandarCorreo(numeroempleado:int, correo:str):
+    try:
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conexion.cursor()
+        cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (numeroempleado, correo))
+        Profesor_Existe = cursor.fetchone()
+        if Profesor_Existe:
+            smtp_server = os.environ('SMTP_SERVER')
+            smtp_port = os.environ('SMTP_PORT')
+            smtp_user = os.environ('SMTP_USER')
+            smtp_password = os.environ('SMTP_PASSWORD')
+            smtp_destiny = correo
+            msg = MIMEMultipart()
+            msg['From'] = smtp_user
+            msg['To'] = smtp_destiny
+            msg['Subject'] = 'Recuperación de contraseña'
+            #CUERPO DEL MSJ NO SE Q PONER XD
+            password = ""
+            for i in range(10):
+                i = random.randint(0, 9)
+                password = f'{password}{i}'
+            body = f'Usted solicitó un cambio de contraseña, su nueva contraseña es:\n\n{password}\n\nEn su siguiente inicio de sesión cambie su contraseña por una propia.'
+            msg.attach(MIMEText(body, 'plain'))
+            try:
+                server = smtplib.SMTP(smtp_server, smtp_port)
+                server.starttls()
+                server.login(smtp_user, smtp_password)
+                text = msg.as_string()
+                server.sendmail(smtp_user, smtp_destiny, text)
+                server.quit()
+                print("Correo enviado exitosamente")
+            except Exception as e:
+                print(f"Error al enviar el correo: {e}")
+        else:
+            print("El profesor no existe")
+    except:
+        print("No se puede acceder a la BD xd")
+    finally:
+        if conexion:
+            conexion.close()
+
+@upiicsara.post('/nuevoinvitado/')
+def nuevoInvitado(idClase:str):
+    respuesta = ""
+    try:
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conexion.cursor()
+        invitado = ""
+        while True:
+            for i in range(5):
+                i = random.randint(0, 9)
+                invitado = f'{invitado}{i}'
+            cursor.execute('SELECT ID_Invitado FROM Invitados WHERE ID_Invitado = %s', (invitado,))
+            Invitado_Existe = cursor.fetchone()
+            if Invitado_Existe:
+                print("Volviendo a generar invitado")
+            else:
+                break
+        cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
+        respuesta = invitado
+    except:
+        print("No se puede acceder a la BD gay")
+        respuesta = False
+    finally:
+        if conexion:
+            conexion.close()
+        return respuesta
+    
+@upiicsara.post('/login-invitado/')
+def loginInvitado(invitado:int):
+    respuesta = False
+    try:
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conexion.cursor()
+        cursor.execute('SELECT * FORM ID_Invitado = %s', (invitado,))
+        Invitado_Existe = cursor.fetchone()
+        if Invitado_Existe:
+            respuesta = True
+    except:
+        print("No se puede acceder a la BD gay")
+        respuesta = False
+    finally:
+        if conexion:
+            conexion.close()
+        return respuesta
+    
+@upiicsara.put('/cambiar-password/')
+def cambiarPassword(password:str):
+    try:
+        conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
+        cursor = conexion.cursor()
+        cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, sesion[0]))
+    except:
+        print("No se puede acceder a la BD gay")
+    finally:
+        if conexion:
+            conexion.close()
