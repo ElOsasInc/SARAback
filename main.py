@@ -313,6 +313,7 @@ def mandarCorreo(request:RecoveryReq):
             for i in range(10):
                 i = random.randint(0, 9)
                 password = f'{password}{i}'
+            cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
             body = f'Usted solicitó un cambio de contraseña, su nueva contraseña es:\n\n{password}\n\nEn su siguiente inicio de sesión cambie su contraseña por una propia.'
             msg.attach(MIMEText(body, 'plain'))
             try:
@@ -323,8 +324,6 @@ def mandarCorreo(request:RecoveryReq):
                 server.sendmail(smtp_user, smtp_destiny, text)
                 server.quit()
                 print("Correo enviado exitosamente")
-                cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
-                print(cursor)
             except Exception as e:
                 print(f"Error al enviar el correo: {e}")
         else:
