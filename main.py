@@ -36,7 +36,10 @@ class SignUpReq(BaseModel):
     nombreProfesor:str
     correo:str
     password: str
-
+    
+class RecoveryReq(BaseModel):
+    numemp: str
+    correo: str
 
 #CREDENCIALES DEL PROFESOR
 sesion = []
@@ -286,12 +289,12 @@ def getSecuencias():
         return JSONResponse(content=clases)
 
 @upiicsara.post('/recuperar-cuenta/')
-def mandarCorreo(numemp:str, correo:str):
-    print(numemp, correo)
+def mandarCorreo(request:RecoveryReq):
+    print(request.numem, request.correo)
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (numemp, correo))
+        cursor.execute('SELECT * FROM Profesores WHERE NumeroEmpleado = %s AND Correo = %s', (request.numemp, request.correo))
         Profesor_Existe = cursor.fetchone()
         print(Profesor_Existe)
         if Profesor_Existe:
@@ -300,7 +303,7 @@ def mandarCorreo(numemp:str, correo:str):
             smtp_port = os.environ('SMTP_PORT')
             smtp_user = os.environ('SMTP_USER')
             smtp_password = os.environ('SMTP_PASSWORD')
-            smtp_destiny = correo
+            smtp_destiny = request.correo
             msg = MIMEMultipart()
             msg['From'] = smtp_user
             msg['To'] = smtp_destiny
