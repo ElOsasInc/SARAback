@@ -325,7 +325,7 @@ def mandarCorreo(request:RecoveryReq):
                 print("Correo enviado exitosamente")
             except Exception as e:
                 print(f"Error al enviar el correo: {e}")
-            cursor.execute('UPDATE Profesores WHERE NumeroEmpleado = %s', (request.numemp,))
+            cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
         else:
             print("El profesor no existe")
     except Exception as error:
