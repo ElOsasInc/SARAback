@@ -355,9 +355,9 @@ def nuevoInvitado(idClase:str):
             else:
                 print(invitado)
                 break
-            cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
-            conexion.commit()
-            respuesta = invitado
+        cursor.execute('CALL InsertInvitado(%s, %s)', (invitado, idClase))
+        conexion.commit()
+        respuesta = invitado
     except:
         print("No se puede acceder a la BD")
         respuesta = False
