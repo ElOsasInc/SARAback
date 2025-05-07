@@ -286,7 +286,7 @@ def getSecuencias():
         return JSONResponse(content=clases)
 
 @upiicsara.post('/recuperar-cuenta/')
-def mandarCorreo(numemp:int, correo:str):
+def mandarCorreo(numemp:str, correo:str):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
