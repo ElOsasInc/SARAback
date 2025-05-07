@@ -290,7 +290,7 @@ def getSecuencias():
 
 @upiicsara.post('/recuperar-cuenta/')
 def mandarCorreo(request:RecoveryReq):
-    print(request.numem, request.correo)
+    print(request.numemp, request.correo)
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
