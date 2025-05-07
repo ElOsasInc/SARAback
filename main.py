@@ -323,9 +323,10 @@ def mandarCorreo(request:RecoveryReq):
                 server.sendmail(smtp_user, smtp_destiny, text)
                 server.quit()
                 print("Correo enviado exitosamente")
+                cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
+                print(cursor)
             except Exception as e:
                 print(f"Error al enviar el correo: {e}")
-            cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
         else:
             print("El profesor no existe")
     except Exception as error:
