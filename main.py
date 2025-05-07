@@ -314,6 +314,7 @@ def mandarCorreo(request:RecoveryReq):
                 i = random.randint(0, 9)
                 password = f'{password}{i}'
             cursor.execute('UPDATE Profesores SET contrasena = %s WHERE NumeroEmpleado = %s', (password, request.numemp))
+            conexion.commit()
             body = f'Usted solicitó un cambio de contraseña, su nueva contraseña es:\n\n{password}\n\nEn su siguiente inicio de sesión cambie su contraseña por una propia.'
             msg.attach(MIMEText(body, 'plain'))
             try:
