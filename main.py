@@ -362,7 +362,7 @@ def nuevoInvitado(idClase:str):
     finally:
         if conexion:
             conexion.close()
-        return respuesta
+        return JSONResponse(content=respuesta)
     
 @upiicsara.post('/login-invitado/')
 def loginInvitado(invitado:int):
