@@ -41,6 +41,8 @@ class RecoveryReq(BaseModel):
     numemp: str
     correo: str
     
+class YaNoTeTengoMiedoFastAPIReq(BaseModel):
+    invitado: str
 
 #CREDENCIALES DEL PROFESOR
 sesion = []
@@ -365,12 +367,12 @@ def nuevoInvitado(idClase:str):
         return JSONResponse(content=respuesta)
     
 @upiicsara.post('/login-invitado/')
-def loginInvitado(invitado:int):
+def loginInvitado(autosuperacion:YaNoTeTengoMiedoFastAPIReq):
     respuesta = False
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT * FORM ID_Invitado = %s', (invitado,))
+        cursor.execute('SELECT * FORM ID_Invitado = %s', (autosuperacion.invitado,))
         Invitado_Existe = cursor.fetchone()
         if Invitado_Existe:
             respuesta = True
@@ -380,7 +382,7 @@ def loginInvitado(invitado:int):
     finally:
         if conexion:
             conexion.close()
-        return respuesta
+        return JSONResponse(content=respuesta)
     
 @upiicsara.put('/cambiar-password/')
 def cambiarPassword(request:LoginReq):
