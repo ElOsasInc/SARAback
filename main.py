@@ -372,7 +372,7 @@ def loginInvitado(autosuperacion:YaNoTeTengoMiedoFastAPIReq):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT * FORM ID_Invitado = %s', (autosuperacion.invitado,))
+        cursor.execute('SELECT * FROM ID_Invitado = %s', (autosuperacion.invitado,))
         Invitado_Existe = cursor.fetchone()
         if Invitado_Existe:
             respuesta = True
