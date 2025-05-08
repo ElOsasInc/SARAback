@@ -372,10 +372,10 @@ def loginInvitado(autosuperacion:YaNoTeTengoMiedoFastAPIReq):
     try:
         conexion = psycopg2.connect(DATABASE_URL, sslmode='require')
         cursor = conexion.cursor()
-        cursor.execute('SELECT * FROM Invitados WHERE ID_Invitado = %s', (autosuperacion.invitado,))
+        cursor.execute('SELECT ID_Clase FROM Invitados WHERE ID_Invitado = %s', (autosuperacion.invitado,))
         Invitado_Existe = cursor.fetchone()
         if Invitado_Existe:
-            respuesta = True
+            respuesta = Invitado_Existe[0]
     except:
         print("No se puede acceder a la BD gay")
         respuesta = False
